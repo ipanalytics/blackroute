@@ -23,9 +23,8 @@ jobs:
       - name: Resolve release tag
         id: release
         run: |
-          day="$(date -u +'%Y.%m.%d')"
-          echo "tag=$day" >> "$GITHUB_OUTPUT"
-          echo "name=Blackroute $day" >> "$GITHUB_OUTPUT"
+          echo "tag=latest" >> "$GITHUB_OUTPUT"
+          echo "name=Blackroute latest" >> "$GITHUB_OUTPUT"
 
       - name: Build Blackroute database
         env:
@@ -75,3 +74,19 @@ jobs:
             dist/blackroute_*_cleanup_stats.json
             dist/blackroute_*_release_summary.md
             dist/checksums.txt
+
+      - name: Keep only latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          KEEP_TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          set -euo pipefail
+
+          gh api --paginate repos/${GITHUB_REPOSITORY}/releases \
+            --jq ".[] | select(.tag_name != \"${KEEP_TAG}\") | [.id, .tag_name] | @tsv" |
+          while IFS=$'\t' read -r release_id tag_name; do
+            [ -n "$release_id" ] || continue
+            echo "Deleting old release ${tag_name}"
+            gh api -X DELETE "repos/${GITHUB_REPOSITORY}/releases/${release_id}"
+            gh api -X DELETE "repos/${GITHUB_REPOSITORY}/git/refs/tags/${tag_name}" || true
+          done

@@ -419,7 +419,7 @@ feeds:
     threat: [recent_attack_any, network_scan_or_abuse]
     classification: [internet_scanner, reconnaissance]
     urls:
-      - https://raw.githubusercontent.com/ShadowWhisperer/IPs/master/Other/Scanners
+      - https://raw.githubusercontent.com/ShadowWhisperer/IPs/refs/heads/master/Lists/Scanners
 
   - kind: textlist
     name: ipblocklist_level3

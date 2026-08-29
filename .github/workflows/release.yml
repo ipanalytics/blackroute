@@ -12,6 +12,10 @@ jobs:
   database:
     name: Build and publish database
     runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GOMEMLIMIT: "5GiB"
+      GOGC: "60"
     steps:
       - uses: actions/checkout@v4
 
@@ -34,7 +38,7 @@ jobs:
           mkdir -p dist
 
           go build -trimpath -ldflags="-s -w" -o ./bin/blackroute ./cmd/collector
-          ./bin/blackroute --feeds=configs/feeds.yaml --output=release --skip-mmdb
+          ./bin/blackroute --feeds=configs/feeds.yaml --output=release
           go run ./cmd/release-cleaner --feeds=configs/feeds.yaml --release=release
 
           test -s release/blackroute.mmdb

@@ -45,8 +45,8 @@ while IFS= read -r url; do
     curl -fsSIL \
       --connect-timeout 10 \
       --max-time 30 \
-      --retry 2 \
-      --retry-delay 2 \
+      --retry 4 \
+      --retry-delay 5 \
       -A "blackroute-feed-monitor/1.0" \
       -o "$headers" \
       -w '%{http_code}' \
@@ -58,8 +58,8 @@ while IFS= read -r url; do
       curl -fsSL \
         --connect-timeout 10 \
         --max-time 30 \
-        --retry 2 \
-        --retry-delay 2 \
+        --retry 4 \
+        --retry-delay 5 \
         -A "blackroute-feed-monitor/1.0" \
         -o /dev/null \
         -w '%{http_code}' \

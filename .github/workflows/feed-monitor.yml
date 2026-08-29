@@ -11,6 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Check feed availability
+        continue-on-error: true  # внешние фиды могут лежать (503) — не валить весь workflow
         env:
           MAX_FEED_AGE_HOURS: "168"
           FAIL_ON_STALE_FEEDS: "false"
